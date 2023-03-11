@@ -1,5 +1,6 @@
 package com.adilalouan.myfancypdfinvoices.web;
 
+import com.adilalouan.myfancypdfinvoices.context.Application;
 import com.adilalouan.myfancypdfinvoices.model.Invoice;
 import com.adilalouan.myfancypdfinvoices.service.InvoiceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,9 +12,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class MyFancyPdfInvoicesServlet extends HttpServlet {
-
-    private InvoiceService invoiceService = new InvoiceService();
-    private ObjectMapper objectMapper = new ObjectMapper();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (request.getRequestURI().equalsIgnoreCase("/")) {
@@ -28,8 +26,8 @@ public class MyFancyPdfInvoicesServlet extends HttpServlet {
         }
         else if (request.getRequestURI().equalsIgnoreCase("/invoices")) {
             response.setContentType("application/json; charset=UTF-8");
-            List<Invoice> invoices = invoiceService.findAll();
-            response.getWriter().print(objectMapper.writeValueAsString(invoices));
+            List<Invoice> invoices = Application.invoiceService.findAll();
+            response.getWriter().print(Application.objectMapper.writeValueAsString(invoices));
         }
     }
 
@@ -40,10 +38,10 @@ public class MyFancyPdfInvoicesServlet extends HttpServlet {
             String userId = request.getParameter("user_id");
             Integer amount = Integer.valueOf(request.getParameter("amount"));
 
-            Invoice invoice = invoiceService.create(userId, amount);
+            Invoice invoice = Application.invoiceService.create(userId, amount);
 
             response.setContentType("application/json; charset=UTF-8");
-            String json = objectMapper.writeValueAsString(invoice);
+            String json = Application.objectMapper.writeValueAsString(invoice);
             response.getWriter().print(json);
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
